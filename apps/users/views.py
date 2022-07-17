@@ -2,10 +2,12 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 
+from assets.views import get_user_monitored_assets
 
 def login(request):
-    if check_login(request):
+    if is_authenticated(request) or check_login(request):
         return redirect("dashboard")
+        
     return render(request, 'users/login.html')
 
 def register(request):
@@ -15,13 +17,20 @@ def register(request):
 
 def dashboard(request):
     if request.user.is_authenticated:
-        return render(request, 'users/dashboard.html')
+        data = {
+            'assets': get_user_monitored_assets(request),
+        }
+
+        return render(request, 'users/dashboard.html', data)
 
     return redirect('login')
 
 def logout(request):
     auth.logout(request)
     return redirect("login")
+
+def is_authenticated(request):
+    return request.user.is_authenticated
 
 def check_login(request):
     """Check user's credentials"""
@@ -78,4 +87,5 @@ def create_register(request):
         return True
     
     return False
-        
+
+

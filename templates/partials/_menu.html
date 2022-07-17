@@ -33,6 +33,15 @@
             <span>Assets Configuration</span></a>
     </li>
 
+    {% if user.is_superuser %}
+        <!-- Nav Item - Admin -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin:index' %}">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Admin</span></a>
+        </li>
+    {% endif %}
+
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
