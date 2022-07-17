@@ -1,3 +1,7 @@
 from django.shortcuts import render
 
-# Create your views here.
+def assets(request):
+    return render(request, 'assets/assets.html')
+
+def configuration(request):
+    return render(request, 'assets/configuration.html')
