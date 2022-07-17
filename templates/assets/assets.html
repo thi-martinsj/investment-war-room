@@ -21,19 +21,86 @@
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Assets</h1>
                 </div>
-                
-                {% include 'partials/_cards.html' %}
+
+                <!-- Content Row -->
+                <div class="row">
+                    {% if assets %}
+                        {% for asset in assets %}
+                            <!-- Card -->
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{asset.ticker}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    {{asset.name}}</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{asset.value}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- End Card -->
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <!-- End Content Row-->
+                <!-- Pagination -->
+                <nav aria-label="...">
+                    {% if assets.has_other_pages %}
+                        <ul class="pagination">
+                            {% if assets.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ assets.previous_page_number }}">Previous</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Previous</span>
+                                </li>
+                            {% endif %}
+
+                            {% for page in assets.paginator.page_range %}
+                                {% if assets.number == page %}
+                                    <li class="page-item active">
+                                        <span class="page-link">
+                                        {{page}}
+                                        <span class="sr-only">(current)</span>
+                                        </span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{page}}">{{page}}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if assets.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ assets.next_page_number }}">Next</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <div class="page-link">Next</div>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </nav>
+                <!-- End Pagination -->
 
                 <!-- Page Heading -->
                 <h1 class="h3 mb-2 text-gray-800">History Values</h1>
-                <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                    For more information about DataTables, please visit the <a target="_blank"
-                        href="https://datatables.net">official DataTables documentation</a>.</p>
 
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Values</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -47,12 +114,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Tiger Nixon</td>
-                                        <td>System Architect</td>
-                                        <td>Edinburgh</td>
-                                        <td>61</td>
-                                    </tr>
+                                    {% if history_values %}
+                                        {% for value in  history_values %}
+                                            <tr>
+                                                <td>{{ value.created_dt }}</td>
+                                                <td>{{ value.asset_id }}</td>
+                                                <td>{{ value.asset_id.name }}</td>
+                                                <td>{{ value.value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
                                 </tbody>
                             </table>
                         </div>
