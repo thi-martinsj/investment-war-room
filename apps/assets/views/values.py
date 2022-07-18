@@ -69,7 +69,7 @@ def check_price(asset_config: AssetsConfig):
     history_value = insert_history_value(
         asset_config.asset_id, asset_config.user_id)
 
-    if asset_config.min_value <= history_value.value:
+    if asset_config.min_value >= history_value.value:
         new_template = template.replace("{%OPORTUNITY%}", "Buy Opportunity").replace(
             "{%TICKER%}", asset_config.asset_id.ticker).replace("{%TEXT%}", f"This is the momment to buy a {asset_config.asset_id.ticker}. It's value is {history_value.value}")
 
