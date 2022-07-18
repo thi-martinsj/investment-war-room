@@ -29,6 +29,7 @@ class AssetsConfig(models.Model):
 class AssetsValues(models.Model):
     created_dt = models.DateTimeField(default=datetime.now)
     asset_id = models.ForeignKey(Assets, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
     def __str__(self) -> str:

@@ -3,6 +3,7 @@ from django.contrib import messages
 
 from ..models import Assets, AssetsConfig
 from .assets import get_assets_per_page
+from .values import insert_history_value
 
 def configuration(request):
     if request.user.is_authenticated:
@@ -46,6 +47,11 @@ def update_config(request):
     asset_config.is_active = params["is_active"]
     asset_config.save()
 
+    if params["is_active"]:
+        asset = Assets.objects.get(pk=params["asset_id"])
+        insert_history_value(asset, request.user)
+
+
     messages.success(request, f"Asset {asset_config.asset_id} Configuration Updated Successfully")
 
 def insert_config(request):
@@ -63,6 +69,10 @@ def insert_config(request):
     )
 
     asset_config.save()
+
+    if params["is_active"]:
+        asset = Assets.objects.get(pk=params["asset_id"])
+        insert_history_value(asset, request.user)
 
     messages.success(request, f"Asset {asset} Configuration Added Successfully")
 

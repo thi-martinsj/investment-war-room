@@ -1,8 +1,14 @@
+import logging
+
 from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
 
 from ..models import Assets, AssetsConfig, AssetsValues
-from .values import get_history_values
+from .values import get_history_values, get_all_companies
+
+
+logger = logging.getLogger(__name__)
+
 
 def assets(request):
     if request.user.is_authenticated:
@@ -12,8 +18,9 @@ def assets(request):
         }
 
         return render(request, 'assets/assets.html', data)
-    
+
     return redirect('login')
+
 
 def get_monitored_assets_from_user(request):
     monitored_assets = AssetsConfig.objects.filter(
@@ -28,6 +35,7 @@ def get_monitored_assets_from_user(request):
 
     return monitored_assets
 
+
 def get_assets_per_page(request):
     assets = Assets.objects.all()
     paginator = Paginator(assets, 12)
@@ -36,3 +44,19 @@ def get_assets_per_page(request):
 
     return assets_per_page
 
+
+def insert_assets():
+    companies = get_all_companies()
+    for company in companies:
+        tickers = company["cd_acao"].split(",")
+        for ticker in tickers:
+            try:
+                asset = Assets.objects.create(
+                    name=company["nm_empresa"],
+                    ticker=ticker.strip()
+                )
+                asset.save()
+
+            except Exception:
+                logger.error(
+                    "Something went wrong when trying to insert a company. Maybe the company is already in database.")

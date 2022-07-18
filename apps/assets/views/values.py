@@ -2,10 +2,22 @@ import logging
 
 from requests import get
 
-from ..models import Assets, AssetsValues
-
+from ..models import AssetsValues
 
 logger = logging.getLogger(__name__)
+
+
+def insert_history_value(asset, user):
+    price = get_price(asset.ticker)
+    value = int(str(price["vl_fechamento"]).replace('.', ""))
+
+    history_value = AssetsValues.objects.create(
+        asset_id = asset,
+        user_id = user,
+        value = value
+    )
+
+    history_value.save()
 
 
 def get_history_values():
@@ -43,20 +55,3 @@ def get_price(ticker):
         logger.exception(
             f"Something went wrong when trying to get price from {ticker}")
         return {}
-
-
-def insert_assets():
-    companies = get_all_companies()
-    for company in companies:
-        tickers = company["cd_acao"].split(",")
-        for ticker in tickers:
-            try:
-                asset = Assets.objects.create(
-                    name = company["nm_empresa"],
-                    ticker = ticker.strip()
-                )
-                asset.save()
-
-            except Exception:
-                logger.error(
-                    "Something went wrong when trying to insert a company. Maybe the company is already in database.")
