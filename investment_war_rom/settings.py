@@ -23,6 +23,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'assets',
     'users',
+    'emails',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,3 +119,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
+
+# Email Config
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_PORT = 1025

@@ -85,7 +85,7 @@ def get_assets_configuration_per_page(request):
 def update_config(request):
     id = request.POST["id"]
     asset_config = AssetsConfig.objects.get(pk=id)
-    params = _get_config_params(request)
+    params = get_config_params(request)
 
     asset_config.min_value = params["min_value"]
     asset_config.max_value = params["max_value"]
@@ -96,7 +96,7 @@ def update_config(request):
     messages.success(request, f"Asset {asset_config.asset_id} Configuration Updated Successfully")
 
 def insert_config(request):
-    params = _get_config_params(request)
+    params = get_config_params(request)
 
     asset = Assets.objects.get(pk=params["asset_id"])
 
@@ -113,7 +113,7 @@ def insert_config(request):
 
     messages.success(request, f"Asset {asset} Configuration Added Successfully")
 
-def _get_config_params(request):
+def get_config_params(request):
     asset_id = request.POST["asset_id"]
     min_value = int(request.POST["min_value"].replace(",", "").replace(".",""))
     max_value = int(request.POST["max_value"].replace(",", "").replace(".",""))
