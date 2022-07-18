@@ -48,13 +48,15 @@ def get_price(ticker):
 def insert_assets():
     companies = get_all_companies()
     for company in companies:
-        try:
-            asset = Assets.objects.create(
-                name = company["nm_empresa"],
-                ticker = company["cd_acao"]
-            )
-            asset.save()
+        tickers = company["cd_acao"].split(",")
+        for ticker in tickers:
+            try:
+                asset = Assets.objects.create(
+                    name = company["nm_empresa"],
+                    ticker = ticker.strip()
+                )
+                asset.save()
 
-        except Exception:
-            logger.error(
-                "Something went when trying to insert a company. Maybe the company is already in database.")
+            except Exception:
+                logger.error(
+                    "Something went wrong when trying to insert a company. Maybe the company is already in database.")
