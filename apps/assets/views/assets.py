@@ -27,13 +27,7 @@ def get_monitored_assets_from_user(request):
 
 def get_assets_per_page(request):
     assets = Assets.objects.all()
-
-    for asset in assets:
-        value = AssetsValues.objects.filter(
-            asset_id=asset.id).order_by("created_dt").last()
-        asset.value = f"{(value.value)/100:.2f}"
-
-    paginator = Paginator(assets, 10)
+    paginator = Paginator(assets, 12)
     page = request.GET.get("page")
     assets_per_page = paginator.get_page(page)
 

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Assets(models.Model):
     created_dt = models.DateTimeField(default=datetime.now)
     name = models.CharField(max_length=50)
-    ticker = models.CharField(max_length=10)
+    ticker = models.CharField(max_length=10, unique=True)
 
     def __str__(self) -> str:
         return self.ticker

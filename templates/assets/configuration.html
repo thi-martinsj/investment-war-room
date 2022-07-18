@@ -34,99 +34,143 @@
                     </form>
 
                 </div> -->
-                
+
 
                 {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-success" role="alert">
-                            {{message}}
-                        </div>
-                    {% endfor %}
+                {% for message in messages %}
+                <div class="alert alert-success" role="alert">
+                    {{message}}
+                </div>
+                {% endfor %}
                 {% endif %}
 
                 <!-- Content Row -->
                 <div class="row">
                     {% if assets %}
-                        {% for asset in assets %}
-                            <!-- Card -->
-                            <div class="col-xl-3 col-md-6 mb-4">
-                                <div class="card border-left-primary shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="h2 mb-0 font-weight-bold text-gray-800">{{asset.ticker}}</div>
+                    {% for asset in assets %}
+                    <!-- Card -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="h2 mb-0 font-weight-bold text-gray-800">{{asset.ticker}}</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <form method="POST" action="{% url 'configuration' %}">
+                                            {% csrf_token %}
+
+                                            <input value="{{asset.config_id}}" name="id" hidden>
+                                            <input value="{{asset.id}}" name="asset_id" hidden>
+
+                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Minimum Value</div>
+                                            <div class="input-group input-group-sm mb-2">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="text" class="form-control" name="min_value"
+                                                    aria-label="Amount (to the nearest dollar)"
+                                                    value="{{asset.min_value}}" required>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <form method="POST" action="{% url 'configuration' %}">
-                                                    {% csrf_token %}
 
-                                                    <input value="{{asset.config_id}}" name="id" hidden>
-                                                    <input value="{{asset.id}}" name="asset_id" hidden>
+                                            <hr class="sidebar-divider my-1">
 
-                                                    <div class="h6 mb-0 font-weight-bold text-gray-800">Minimum Value</div>
-                                                    <div class="input-group input-group-sm mb-2">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">$</span>
-                                                        </div>
-                                                        <input type="text" class="form-control" name="min_value"
-                                                            aria-label="Amount (to the nearest dollar)" value="{{asset.min_value}}" required>
-                                                    </div>
-
-                                                    <hr class="sidebar-divider my-1">
-
-                                                    <div class="h6 mb-0 font-weight-bold text-gray-800">Maximum Value</div>
-                                                    <div class="input-group input-group-sm mb-2">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">$</span>
-                                                        </div>
-                                                        <input type="text" class="form-control" name="max_value"
-                                                            aria-label="Amount (to the nearest dollar)" value="{{asset.max_value}}" required>
-                                                    </div>
-
-                                                    <hr class="sidebar-divider my-1">
-
-                                                    <div class="h6 mb-0 font-weight-bold text-gray-800">Frequency</div>
-                                                    <div class="input-group input-group-sm mb-2">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">Min</span>
-                                                        </div>
-                                                        <input type="number" class="form-control" name="frequency"
-                                                            aria-label="Amount (to the nearest dollar)" value="{{asset.frequency}}" required>
-                                                    </div>
-
-                                                    <hr class="sidebar-divider my-1">
-
-                                                    <div class="h6 mb-0 font-weight-bold text-gray-800">Active</div>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <div class="input-group-text">
-                                                                {% if asset.is_active %}
-                                                                    <input type="checkbox" name="is_active"
-                                                                        aria-label="Checkbox for following text input" checked value="True">
-                                                                {% else %}
-                                                                    <input type="checkbox" name="is_active"
-                                                                        aria-label="Checkbox for following text input " value="True">
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-
-                                                        <button type="submit" class="btn btn-dark ml-auto">Save</button>
-                                                    </div>
-                                                </form>
+                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Maximum Value</div>
+                                            <div class="input-group input-group-sm mb-2">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">$</span>
+                                                </div>
+                                                <input type="text" class="form-control" name="max_value"
+                                                    aria-label="Amount (to the nearest dollar)"
+                                                    value="{{asset.max_value}}" required>
                                             </div>
-                                        </div>
+
+                                            <hr class="sidebar-divider my-1">
+
+                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Frequency</div>
+                                            <div class="input-group input-group-sm mb-2">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Min</span>
+                                                </div>
+                                                <input type="number" class="form-control" name="frequency"
+                                                    aria-label="Amount (to the nearest dollar)"
+                                                    value="{{asset.frequency}}" required>
+                                            </div>
+
+                                            <hr class="sidebar-divider my-1">
+
+                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Active</div>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        {% if asset.is_active %}
+                                                        <input type="checkbox" name="is_active"
+                                                            aria-label="Checkbox for following text input" checked
+                                                            value="True">
+                                                        {% else %}
+                                                        <input type="checkbox" name="is_active"
+                                                            aria-label="Checkbox for following text input "
+                                                            value="True">
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-dark ml-auto">Save</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                            <!-- End Card-->
-                        {% endfor %}
+                        </div>
+                    </div>
+                    <!-- End Card-->
+                    {% endfor %}
                     {% endif %}
                 </div>
                 <!-- End Content Row-->
+                <!-- Pagination -->
+                <nav aria-label="...">
+                    {% if assets.has_other_pages %}
+                    <ul class="pagination">
+                        {% if assets.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ assets.previous_page_number }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Previous</span>
+                        </li>
+                        {% endif %}
 
+                        {% for page in assets.paginator.page_range %}
+                        {% if assets.number == page %}
+                        <li class="page-item active">
+                            <span class="page-link">
+                                {{page}}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{page}}">{{page}}</a></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if assets.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ assets.next_page_number }}">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <div class="page-link">Next</div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>
+                <!-- End Pagination -->
             </div>
             <!-- End of Main Content -->
         </div>
