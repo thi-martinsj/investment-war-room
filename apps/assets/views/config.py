@@ -4,6 +4,7 @@ from django.contrib import messages
 from ..models import Assets, AssetsConfig
 from .assets import get_assets_per_page
 from .values import insert_history_value
+from .. import scheduler
 
 def configuration(request):
     if request.user.is_authenticated:
@@ -18,8 +19,9 @@ def configuration(request):
         }
 
         return render(request, 'assets/configuration.html', data)
-    
+
     return redirect('login')
+
 
 def get_assets_configuration_per_page(request):
     assets_per_age = get_assets_per_page(request)
@@ -36,6 +38,7 @@ def get_assets_configuration_per_page(request):
 
     return assets_per_age
 
+
 def update_config(request):
     id = request.POST["id"]
     asset_config = AssetsConfig.objects.get(pk=id)
@@ -46,13 +49,17 @@ def update_config(request):
     asset_config.frequency = params["frequency"]
     asset_config.is_active = params["is_active"]
     asset_config.save()
-
+    
     if params["is_active"]:
         asset = Assets.objects.get(pk=params["asset_id"])
         insert_history_value(asset, request.user)
+        scheduler.create_job(asset_config)
+    else:
+        scheduler.delete_job(f"{asset_config.id}")
 
+    messages.success(
+        request, f"Asset {asset_config.asset_id} Configuration Updated Successfully")
 
-    messages.success(request, f"Asset {asset_config.asset_id} Configuration Updated Successfully")
 
 def insert_config(request):
     params = get_config_params(request)
@@ -60,12 +67,12 @@ def insert_config(request):
     asset = Assets.objects.get(pk=params["asset_id"])
 
     asset_config = AssetsConfig.objects.create(
-        asset_id = asset,
-        user_id = request.user,
-        min_value = params["min_value"],
-        max_value = params["max_value"],
-        frequency = params["frequency"],
-        is_active = params["is_active"]
+        asset_id=asset,
+        user_id=request.user,
+        min_value=params["min_value"],
+        max_value=params["max_value"],
+        frequency=params["frequency"],
+        is_active=params["is_active"]
     )
 
     asset_config.save()
@@ -73,13 +80,18 @@ def insert_config(request):
     if params["is_active"]:
         asset = Assets.objects.get(pk=params["asset_id"])
         insert_history_value(asset, request.user)
+        scheduler.create_job(asset_config)
 
-    messages.success(request, f"Asset {asset} Configuration Added Successfully")
+    messages.success(
+        request, f"Asset {asset} Configuration Added Successfully")
+
 
 def get_config_params(request):
     asset_id = request.POST["asset_id"]
-    min_value = int(request.POST["min_value"].replace(",", "").replace(".",""))
-    max_value = int(request.POST["max_value"].replace(",", "").replace(".",""))
+    min_value = int(request.POST["min_value"].replace(
+        ",", "").replace(".", ""))
+    max_value = int(request.POST["max_value"].replace(
+        ",", "").replace(".", ""))
     frequency = int(request.POST["frequency"])
     is_active = False
 

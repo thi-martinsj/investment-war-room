@@ -7,4 +7,7 @@ class AssetsConfig(AppConfig):
 
     def ready(self) -> None:
         from .views import insert_assets
+        from . import scheduler
+
         insert_assets()
+        scheduler.start()

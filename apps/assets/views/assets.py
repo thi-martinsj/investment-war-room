@@ -14,7 +14,7 @@ def assets(request):
     if request.user.is_authenticated:
         data = {
             "assets": get_assets_per_page(request),
-            "history_values": get_history_values()
+            "history_values": get_history_values(request)
         }
 
         return render(request, 'assets/assets.html', data)
@@ -60,3 +60,10 @@ def insert_assets():
             except Exception:
                 logger.error(
                     "Something went wrong when trying to insert a company. Maybe the company is already in database.")
+
+
+def get_all_assets_config_actived():
+    assets_config = AssetsConfig.objects.filter(is_active=True)
+
+    return assets_config
+
