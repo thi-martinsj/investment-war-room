@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 
-from assets.views import get_user_monitored_assets
+from assets.views import get_monitored_assets_from_user
 
 def login(request):
     if is_authenticated(request) or check_login(request):
@@ -18,7 +18,7 @@ def register(request):
 def dashboard(request):
     if request.user.is_authenticated:
         data = {
-            'assets': get_user_monitored_assets(request),
+            'assets': get_monitored_assets_from_user(request),
         }
 
         return render(request, 'users/dashboard.html', data)

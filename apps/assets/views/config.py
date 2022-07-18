@@ -1,25 +1,8 @@
-import logging
-
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.core.paginator import Paginator
 from django.contrib import messages
-from requests import get
 
-from .models import Assets, AssetsConfig, AssetsValues
-
-
-logger = logging.getLogger(__name__)
-
-
-def assets(request):
-    data = {
-        "assets": get_assets_per_page(request),
-        "history_values": get_history_values()
-    }
-
-    return render(request, 'assets/assets.html', data)
-
+from ..models import Assets, AssetsConfig
+from .assets import get_assets_per_page
 
 def configuration(request):
     if request.method == "POST":
@@ -33,45 +16,6 @@ def configuration(request):
     }
 
     return render(request, 'assets/configuration.html', data)
-
-
-def get_user_monitored_assets(request):
-    monitored_assets = AssetsConfig.objects.filter(
-        user_id=request.user.id,
-        is_active=True
-    )
-
-    for asset in monitored_assets:
-        value = AssetsValues.objects.filter(
-            asset_id=asset.asset_id).order_by("created_dt").last()
-        asset.value = f"{(value.value)/100:.2f}"
-
-    return monitored_assets
-
-
-def get_assets_per_page(request):
-    assets = Assets.objects.all()
-
-    for asset in assets:
-        value = AssetsValues.objects.filter(
-            asset_id=asset.id).order_by("created_dt").last()
-        asset.value = f"{(value.value)/100:.2f}"
-
-    paginator = Paginator(assets, 10)
-    page = request.GET.get("page")
-    assets_per_page = paginator.get_page(page)
-
-    return assets_per_page
-
-
-def get_history_values():
-    values = AssetsValues.objects.all().order_by("-created_dt")
-
-    for value in values:
-        value.value = f"{(value.value)/100:.2f}"
-
-    return values
-
 
 def get_assets_configuration_per_page(request):
     assets_per_age = get_assets_per_page(request)
@@ -87,7 +31,6 @@ def get_assets_configuration_per_page(request):
             asset.is_active = asset_config.is_active
 
     return assets_per_age
-
 
 def update_config(request):
     id = request.POST["id"]
@@ -137,27 +80,3 @@ def get_config_params(request):
         "frequency": frequency,
         "is_active": is_active
     }
-
-def get_all_companies():
-    try:
-        companies = get(
-            url="https://api-cotacao-b3.labdo.it/api/empresa"
-        )
-
-        return companies.json()
-    except Exception:
-        logger.exception("Something went wrong when trying to get all companies")
-        return []
-
-def get_price(ticker):
-    try:
-        prices = get(
-            url=f"https://api-cotacao-b3.labdo.it/api/cotacao/cd_acao/{ticker}"
-        )
-        
-        last_price = prices.json()[0]
-
-        return last_price
-    except Exception:
-        logger.exception(f"Something went wrong when trying to get price from {ticker}")
-        return {}
