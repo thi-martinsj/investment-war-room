@@ -53,13 +53,13 @@ The terminal will be running the server simulation.
 
 ### Run the Migrations
 
-It uses the `DB SQLite` database. It is already installed with Django.
 
 So, execute the following command to run the migrations:
 ```
 python manage.py migrate
 ```
 ### Run the Application
+It uses the `DB SQLite` database. It is already installed with Django and it has the `db.sqlite3` file with all configurations ready to be used.
 
 Finally, to run the application execute the command:
 ```
