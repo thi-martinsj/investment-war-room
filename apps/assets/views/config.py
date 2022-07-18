@@ -1,21 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib import messages
 
 from ..models import Assets, AssetsConfig
 from .assets import get_assets_per_page
 
 def configuration(request):
-    if request.method == "POST":
-        if request.POST["id"]:
-            update_config(request)
-        else:
-            insert_config(request)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if request.POST["id"]:
+                update_config(request)
+            else:
+                insert_config(request)
 
-    data = {
-        "assets": get_assets_configuration_per_page(request)
-    }
+        data = {
+            "assets": get_assets_configuration_per_page(request)
+        }
 
-    return render(request, 'assets/configuration.html', data)
+        return render(request, 'assets/configuration.html', data)
+    
+    return redirect('login')
 
 def get_assets_configuration_per_page(request):
     assets_per_age = get_assets_per_page(request)

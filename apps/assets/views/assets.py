@@ -1,16 +1,19 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
 
 from ..models import Assets, AssetsConfig, AssetsValues
 from .values import get_history_values
 
 def assets(request):
-    data = {
-        "assets": get_assets_per_page(request),
-        "history_values": get_history_values()
-    }
+    if request.user.is_authenticated:
+        data = {
+            "assets": get_assets_per_page(request),
+            "history_values": get_history_values()
+        }
 
-    return render(request, 'assets/assets.html', data)
+        return render(request, 'assets/assets.html', data)
+    
+    return redirect('login')
 
 def get_monitored_assets_from_user(request):
     monitored_assets = AssetsConfig.objects.filter(
